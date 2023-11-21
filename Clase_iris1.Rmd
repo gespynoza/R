@@ -1,0 +1,229 @@
+---
+output:
+  html_document: default
+---
+Docente:Gabriela Espinoza Picado
+CENFOTEC
+
+Sobre el  Dataset
+
+El conjunto de datos Iris es uno de los conjuntos de datos más famosos y ampliamente utilizados en la ciencia de datos y la estadística. Fue introducido por el biólogo y estadístico británico Ronald A. Fisher en 1936. Este conjunto de datos se utiliza comúnmente como un ejemplo de problemas de clasificación y análisis multivariante.
+
+El conjunto de datos Iris contiene observaciones de 150 muestras de flores Iris de tres especies diferentes: setosa, versicolor y virginica. Cada muestra se caracteriza por cuatro características (variables): la longitud y el ancho del sépalo y la longitud y el ancho del pétalo, todas medidas en centímetros. Estas medidas se toman de las partes de la flor, el sépalo y el pétalo, que son estructuras en la base de la flor.
+
+
+**Pregunta 1: Renombrar, recodificar y seleccionar variables en el conjunto de datos "iris".**
+![iris](/home/notebook/Documents/CENFOTEC/iris.png)
+```{r}
+# Ruta del archivo
+ruta_archivo <- "/home/notebook/CENFOTEC/iris.csv"
+
+# Leer el archivo
+iris <- read.csv(ruta_archivo, sep=";", dec=",")
+
+# Realizar operaciones con los datos
+# Por ejemplo, para ver las primeras filas del dataframe:
+head(iris)
+```
+
+```{r}
+library(dplyr)
+```
+
+# Renombrar variable
+
+```{r}
+iris <- iris %>%
+  rename(Sepal.Length=s.largo )
+```
+En este paso, estamos utilizando la función rename del paquete dplyr para cambiar el nombre de la variable Sepal.
+
+# Recodificar variable
+```{r}
+iris_recodificado <- iris %>%
+  mutate(Etiqueta_Species = case_when(
+    tipo == "setosa" ~ "Tipo Setosa",
+    tipo == "versicolor" ~ "Tipo Versicolor",
+    tipo == "virginica" ~ "Tipo Virginica",
+    TRUE ~ tipo
+  ))
+```
+En este paso, utilizamos la función mutate para crear una nueva variable llamada Etiqueta_Species. Usamos case_when para asignar etiquetas más descriptivas según los valores en la variable Species.
+
+# Seleccionar variables
+```{r}
+iris_seleccionado <- iris %>%
+  select(Sepal.Length, s.ancho, tipo)
+```
+Aquí, usamos la función select para elegir solo las variables Sepal.Length, s.anchoy tipo del conjunto de datos "iris".
+
+**Pregunta 2: Ordenar y agrupar el conjunto de datos "iris" para realizar cálculos.**
+
+```{r}
+iris_ordenado <- iris %>%
+  arrange(Sepal.Length, s.ancho)
+```
+En este paso, usamos la función arrange para ordenar el conjunto de datos "iris" primero por Sepal.Length y luego por Sepal.Width.
+
+# Calcular medias por especie
+
+```
+
+```{r}
+class(iris$Sepal.Length)
+```
+
+
+```{r}
+
+# Ahora puedes realizar operaciones en las columnas con los nombres correctos
+medias_por_especie <- iris %>%
+  group_by(tipo) %>%
+  summarise(Media_Sepal_Length = mean(Sepal.Length))
+
+```
+
+
+Aquí, utilizamos group_by para agrupar el conjunto de datos por Species y luego aplicamos summarise para calcular la media de Sepal.Length para cada especie.
+
+```{r}
+# Asegúrate de que la columna Sepal.Length sea numérica
+iris$Sepal.Length <- as.numeric(iris$Sepal.Length)
+
+# Ahora puedes calcular la media sin errores
+iris_summarized <- iris %>%
+  group_by(tipo) %>%
+  summarise(Media_Sepal_Length = mean(Sepal.Length, na.rm = TRUE))
+```
+
+
+**Pregunta 3: Crear nuevas variables y aplicar filtros sobre el conjunto de datos "iris".**
+
+
+# Crear nueva variable
+```{r}
+iris$s.ancho<- as.numeric(iris$s.ancho)
+```
+
+```{r}
+iris__Area <- iris %>%
+  mutate(Sepal_Area = Sepal.Length * s.ancho)
+```
+En este paso, usamos mutate para crear una nueva variable llamada Sepal_Area, que es el producto de Sepal.Length y Sepal.Width.
+
+# Aplicar filtro
+```{r}
+iris$p.largo<- as.numeric(iris$p.largo)
+```
+
+```{r}
+iris_filtrado <- iris %>%
+  filter(p.largo > 4 & tipo == "setosa")
+```
+Aquí, utilizamos filter para seleccionar las observaciones donde Petal.Length es mayor a 4 y Species es igual a "setosa".
+
+**Pregunta 5: Crear diferentes tipos de gráficos descriptivos utilizando el paquete "ggplot2".**
+
+```{r}
+library(ggplot2)
+```
+En este paso, utilizamos ggplot para crear un gráfico de dispersión simple con Sepal.Length en el eje x y Sepal.Width en el eje y.
+
+**Ejemplo de gràficos** 
+
+# Gráfico de dispersiòn
+```{r}
+install.packages("ggplot2")
+```
+
+```{r}
+library(ggplot2)
+
+ggplot(iris, aes(x = Sepal.Length, y = s.ancho)) +
+  geom_point()
+```
+El gráfico anterior es un gráfico de dispersión. Un gráfico, es decir una forma de visualización que muestra cómo dos variables numéricas diferentes están relacionadas entre sí. En el caso de los datos del conjunto "iris", estamos graficando la longitud del sépalo (variable Sepal.Length) en el eje x y el ancho del sépalo (variable Sepal.Width) en el eje y. Cada punto en el gráfico representa una observación individual en el conjunto de datos.
+
+Interpretar un gráfico de dispersión implica entender cómo las dos variables se comportan juntas y si hay alguna relación o patrón aparente entre ellas. Aquí te indico cómo se lee el gráfico de dispersión simple:
+
+* Ejes X e Y: El eje horizontal (X) representa la longitud del sépalo (Sepal.Length), y el eje vertical (Y) representa el ancho del sépalo (Sepal.Width).
+
+* Puntos: Cada punto en el gráfico representa una flor individual en el conjunto de datos "iris". El punto está ubicado en las coordenadas correspondientes a su longitud del sépalo en el eje X y su ancho del sépalo en el eje Y.
+
+* Tendencia: Observa la dirección general de los puntos en el gráfico. Si los puntos tienden a agruparse en una cierta dirección (positiva o negativa), esto puede indicar una posible correlación entre las variables. En este caso, verifica si los puntos tienden a moverse hacia arriba o hacia abajo a medida que una variable aumenta.
+
+* Distribución: La dispersión de los puntos puede dar una idea de la variabilidad en las mediciones. Si los puntos están más dispersos, la variabilidad entre las observaciones es mayor. Si los puntos están más cerca unos de otros, la variabilidad es menor.
+
+Patrones o Agrupaciones: Examina si hay patrones claros o agrupaciones de puntos en el gráfico. Esto podría indicar diferentes subgrupos o patrones en los datos.
+
+
+# Gráfico histograma
+
+```{r}
+ggplot(iris, aes(x = Sepal.Length, fill = tipo)) +
+geom_histogram(binwidth = 0.2, alpha = 0.6)
+```
+Aquí, creamos un histograma usando ggplot, donde las barras están agrupadas por Species y usamos la opción fill para colorear las barras según la especie.
+
+* Eje X (Longitud del Sépalo): En el eje horizontal (X), tenemos la longitud del sépalo (Sepal.Length).
+
+* Eje Y (Frecuencia): En el eje vertical (Y), tenemos la frecuencia o cantidad de observaciones para cada rango de longitud del sépalo.
+
+* Barras Agrupadas por Especie: El histograma tiene barras agrupadas por especies. Cada barra representa la distribución de las longitudes del sépalo para una especie particular.
+
+ * Altura de las Barras: La altura de las barras representa la frecuencia de observaciones en ese rango particular de longitud del sépalo. Cuanto más alta sea la barra, mayor será la cantidad de observaciones en ese rango.
+
+* Colores: Las barras están coloreadas según la especie correspondiente. Esto permite comparar visualmente las distribuciones entre las especies.
+
+* Ancho de las Barras: El ancho de las barras puede variar según el rango de longitud del sépalo que están representando.
+
+Interpretar el gráfico de histograma agrupado por especies implica comprender cómo se distribuyen las longitudes del sépalo dentro de cada especie y cómo se comparan esas distribuciones entre las diferentes especies. Puedes observar patrones, tendencias y diferencias en las longitudes del sépalo para cada especie.
+
+# Gráfico Boxplot
+
+```{r}
+ggplot(iris, aes(x = tipo, y = Sepal.Length, fill = tipo)) +
+geom_boxplot() +
+theme_minimal() +
+labs(title = "Longitud del Sépalo por Especie", x = "Especie", y = "Longitud del Sépalo")
+```
+En este paso, creamos un gráfico de cajas y bigotes utilizando geom_boxplot. Usamos theme_minimal para un estilo limpio y usamos labs para etiquetas personalizadas en el título y los ejes.
+
+En el gráfico, utilizamos un boxplot para representar la longitud del sépalo (Sepal.Length) de las diferentes especies de flores en el conjunto de datos "iris". Aquí está cómo se interpreta el gráfico de cajas y bigotes:
+
+* Eje X (Especie): En el eje horizontal (X), tenemos las diferentes especies de flores: Setosa, Versicolor y Virginica.
+
+* Eje Y (Longitud del Sépalo): En el eje vertical (Y), tenemos la longitud del sépalo (Sepal.Length).
+
+* Cajas: Para cada especie, hay una caja que representa la distribución de las longitudes del sépalo. La parte inferior de la caja indica el primer cuartil (Q1), la parte superior indica el tercer cuartil (Q3), y la línea en el medio de la caja es la mediana.
+
+* Bigotes: Los bigotes se extienden desde los bordes de las cajas hacia los valores extremos (valores que no son atípicos). Los bigotes pueden variar en longitud dependiendo de la variabilidad de los datos, pero generalmente abarcan 1.5 veces el rango intercuartílico (IQR).
+
+* Valores Atípicos: Los puntos individuales fuera de los bigotes se consideran valores atípicos. En el gráfico, los valores atípicos se representarían como puntos individuales.
+
+* Comparación entre Especies: El gráfico te permite comparar visualmente la distribución de las longitudes del sépalo entre las tres especies. Puedes observar si hay diferencias en las medianas, la variabilidad y la presencia de valores atípicos entre las especies.
+
+* Mediana: La línea dentro de la caja representa la mediana, que es el valor en el centro de los datos ordenados. Divide el conjunto de datos en dos partes iguales: el 50% de los valores está por encima y el 50% está por debajo de la mediana.
+
+En resumen, el gráfico de cajas y bigotes (boxplot) es una herramienta efectiva para resumir la distribución y la variabilidad de las longitudes del sépalo en diferentes especies de flores. Te permite identificar fácilmente las medianas, cuartiles y valores atípicos, y comparar las características de las distribuciones entre las especies.
+
+El boxplot es una herramienta útil para analizar la dispersión y la forma de la distribución de los datos, así como para identificar valores extremos o inusuales en un conjunto de datos. También es útil para comparar varias distribuciones lado a lado y para identificar diferencias en la mediana y la variabilidad entre diferentes grupos.
+
+En este caso el boxplot se utilizó para mostrar cómo varía la longitud del sépalo en diferentes especies de flores en el conjunto de datos "iris". Cada caja y bigotes representaba la distribución de las longitudes del sépalo para cada especie, permitiendo una comparación visual de las características de las longitudes del sépalo entre las especies.
+
+```{r}
+# Load the Iris dataset 
+data(iris)
+
+# Create a pairplot
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point() +
+  labs(title = "Scatterplot of Sepal Length vs Sepal Width", 
+       x = "Sepal Length", y = "Sepal Width") +
+  theme_minimal()
+
+```
+
+
+
+
